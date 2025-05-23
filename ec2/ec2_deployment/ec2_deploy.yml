@@ -1,0 +1,39 @@
+---
+- hosts: localhost
+  connection: local
+
+  tasks:
+  - name: Create a security group with SSH access
+    amazon.aws.ec2_group:
+      name: "ec2-ssh-access"
+      description: "Allow SSH access from anywhere"
+      region: ap-south-1
+      aws_access_key: "{{ ec2_access_key }}"
+      aws_secret_key: "{{ ec2_secret_key }}"
+      rules:
+        - proto: tcp
+          ports:
+            - 22
+          cidr_ip: 0.0.0.0/0
+      tags:
+        Name: "ec2-ssh-access"
+    register: ssh_sg
+
+  - name: Create EC2 instances
+    amazon.aws.ec2_instance:
+       name: "{{ item.name }}"
+       key_name: "sid-key"
+       instance_type: t2.micro
+       security_group: "{{ ssh_sg.group_id }}"
+       region: ap-south-1
+       aws_access_key: "{{ ec2_access_key }}"
+       aws_secret_key: "{{ ec2_secret_key }}"
+       network_interfaces:
+         - assign_public_ip: true
+       image_id: "{{ item.image }}"
+       tags:
+         environment: "{{ item.name }}"
+    loop:
+      - { image: "ami-0af9569868786b23a", name: "worker-node-1" }
+      - { image: "ami-0e35ddab05955cf57", name: "worker-node-2" }
+      - { image: "ami-0e35ddab05955cf57", name: "worker-node-3" }
