@@ -1,6 +1,4 @@
-Sure! Here's the corrected content formatted as a complete `README.md` Markdown file:
 
-````markdown
 # 🛠️ Ansible Automation Playbooks
 
 Welcome to my **Ansible** repository — a growing collection of playbooks to automate common AWS and Linux tasks. These playbooks are designed for ease of use and assist in provisioning, managing, and tearing down infrastructure like EC2 instances.
